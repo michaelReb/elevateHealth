@@ -7,4 +7,4 @@ Code and data for
 
 See updates on https://www.linkedin.com/groups/14503169/
 
-Contact for this GitHub repo: michael.rebhan@novartis.com
+Contact for this GitHub repo: Michael Rebhan, https://www.linkedin.com/in/michael-rebhan-b022751/
