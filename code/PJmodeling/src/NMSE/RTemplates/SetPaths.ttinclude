@@ -1,0 +1,9 @@
+﻿# Paths
+
+setwd (".")
+
+path_figures_folder <- "figures" 
+path_data_folder <- "data"
+
+dir.create(path_figures_folder, showWarnings = FALSE)
+dir.create(path_data_folder, showWarnings = FALSE)

@@ -1,0 +1,18 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+# READ ME
+
+This file an the R-code has been generated with version 1 of the 'Markov Patient Journey Modelling' Application
+Find the current version at: https://github.com/novartis
+
+
+* Project Title: <# WriteLine(SimProb.Instance.ProjectTitle); #>
+* Authors: <# WriteLine(SimProb.Instance.ProjectAuthors); #>
+* Description: <# WriteLine(SimProb.Instance.ProjectDescription); #>
+* Date of creation: <# WriteLine(DateTime.Now.ToString("yyyy-MM-dd_hhmm").ToString(CultureInfo.InvariantCulture)); #>
+

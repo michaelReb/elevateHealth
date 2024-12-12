@@ -1,0 +1,14 @@
+﻿library(stats)
+library(base)
+library(ggplot2)
+library(matrixdist)
+library(tidyverse)
+library(expm)
+library(trustOptim)
+library(pracma)
+
+# methods used for multiple models are defined in a separate file
+source("functions.R")
+
+# for debugging purposes
+sessionInfo()
