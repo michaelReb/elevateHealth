@@ -56,7 +56,7 @@ On this page you select the model you would like to run.
 
 ### Project Description
 
-![Screenshot "Project Description" page](doc/screenshots/03_project_desription.PNG)
+![Screenshot "Project Description" page](03_project_desription.PNG)
 
 To provide a comprehensive overview, please include the project title, author, and a concise description including the indication, country of use, and data source. If the project is a pilot or test case, kindly mention it in the description field for clarity.
 
@@ -66,22 +66,22 @@ The fields “title” and “authors” are necessary. Once you entered that in
 
 ### Setup Pages
 
-![Screenshot "Setup Patient Flow" page](doc/screenshots/04_setup_patient_flow.PNG)
+![Screenshot "Setup Patient Flow" page](04_setup_patient_flow.PNG)
 
-![Screenshot "Setup Time Relations" page](doc/screenshots/05_setup_time_relations.PNG)
+![Screenshot "Setup Time Relations" page](05_setup_time_relations.PNG)
 
-![Screenshot "Setup Interventions" page](doc/screenshots/06_setup_interventions.PNG)
+![Screenshot "Setup Interventions" page](06_setup_interventions.PNG)
 
 
 Within these windows, you have the flexibility to specify the effects you wish to simulate on your patient journey. The default values have been pre-set based on the Chronic Spontaneous Urticaria (CSU) model in Germany, which can be found in the provided reference.
 
 ### Run Simulation / Results
 
-![Screenshot "Run simulation" page](doc/screenshots/07_run_simulation.PNG)
+![Screenshot "Run simulation" page](07_run_simulation.PNG)
 
 On this page you can start the simulation. First it will you ask for the folder you want to store the results in. Then this will write the necessary R code (with the parameters you provided before) and then run it. This might take some minutes.
 
 
-![Screenshot "Simulation Results" page](doc/screenshots/08_simulation_results.PNG)
+![Screenshot "Simulation Results" page](08_simulation_results.PNG)
 
 This page shows you a preview of the results. With a click on the button below the images you open the result folder. It contains the generated code, input data used and the output in form of data and graphs.
