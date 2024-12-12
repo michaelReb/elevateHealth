@@ -44,13 +44,13 @@ This application was developed by GABO GmbH: Rüdiger Voigt, Wolfgang Irlinger
 
 ### Setup Check
 
-![Screenshot "setup check" page](doc/screenshots/01_setup_check.PNG)
+![Screenshot "setup check" page](01_setup_check.PNG)
 
 This application generates R code. To run it, you need to select an installed version of R. This page then checks if all necessary R libraries are installed. If that is not the case, please install those before running the application.
 
 ### Select Model
 
-![Screenshot "Select Model" page](doc/screenshots/02_select_model.PNG)
+![Screenshot "Select Model" page](02_select_model.PNG)
 
 On this page you select the model you would like to run. 
 
