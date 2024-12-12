@@ -1,0 +1,585 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+# Generated with Novartis Markov Simulation Engine (NMSE)
+# Version: <# #>
+#
+# Project Title: <# #>
+# Authors: <# #>
+# Description: <# #>
+# Date of creation: <# WriteLine(DateTime.Now.ToString("yyyy-MM-dd_hhmm").ToString(CultureInfo.InvariantCulture)); #>
+
+
+# Set working directory
+
+setwd (".")
+
+# Load libraries
+
+#library(Matrix)    # GPL3 Licence
+library(stats)      # Base
+library(base)       #? Wird es im Code verwendet?
+library(readxl)     # MIT Licence --> Closed Source verwendbar 
+library(ggplot2)    # MIT Licence --> Closed Source verwendbar
+library(matrixdist) # GPL3 Licence
+library(tidyverse)  # OK
+library(writexl)    # OK
+library(expm)       # GPL3 Licence
+library(trustOptim) # ???
+library(pracma)     # ???
+
+## #########################################################################  ##
+# function 1: recalculate_main_diagonal 
+# 
+# step 1: All main diagonal elements are set to 0
+# step 2: For each row the main diagonal is set so that row sum adds up to 1
+# -- validated --
+## ########################################################################## ##
+
+recalculate_main_diagonal <- function(rawMatrix)
+{
+for (k in 1:nrow(rawMatrix)) {
+  rawMatrix[k, k] <- 0
+  rawMatrix[k, k] <- 1 - sum(rawMatrix[k, ])
+}
+return(rawMatrix)
+}
+
+############################################################################# ##
+# function 2: check_matrix_row_sum
+# 
+# step 1: Check whether each row sum is 1.
+# step 2: Return (Failure if not)
+# -- validated --
+############################################################################# ##
+
+
+check_matrix_row_sum <- function(rawMatrix)
+{
+  for (k in 1:nrow(rawMatrix)) {
+    if (sum(rawMatrix[k, ]) != 1) {
+    cat("Probabilities in row", k, "!= 1 - Value:", sum(rawMatrix[k, ]), "\n")
+    return(FALSE)
+  } else {return(TRUE)}
+  }
+}
+
+############################################################################# ##
+# function 3: model_diseasestates
+#
+# step 1: Define Transition States
+# step 2: calculate timeevol
+# step 3: return timeevol
+#
+############################################################################ ##
+
+model_diseasestates <- function(variables) {
+
+# step 1:
+# u: uncontrolled; c: controlled; s: symptom-free
+  
+  uu <- variables[1]
+  uc <- variables[2]
+  us <- variables[3]
+  cu <- variables[4]
+  cc <- variables[5]
+  cs <- variables[6]
+  su <- variables[7]
+  sc <- variables[8]
+  ss <- variables[9]
+  
+  transMatrix <- base::matrix(c(uu, uc, us, cu, cc, cs, su, sc, ss), nrow = 3, ncol = 3, byrow = TRUE)
+  
+  # print(transMatrix)
+  # Normalization of Matrix transMatrix
+  
+  # transMatrix_norm <- base::prop.table(transMatrix, margin = 1)
+  # transMatrix_norm2 <- normalize_rows_l1(transMatrix)
+  # 
+  # print(transMatrix_norm)
+  # print(transMatrix_norm2)
+ 
+  initialState <- c(0.614, 0.3088, 0.0772)  #todo initial state not hard coded in function 
+  
+  timeevol <- initialState
+  
+  for (k in 1:number_of_cycles_t) {
+    #  Original Version
+    timeevol <- c(timeevol, as.vector(initialState %*% matrixdist::matrix_power(k, transMatrix)))
+    
+    # transposed version of initialState
+    # timeevol <- c(timeevol, as.vector(t(initialState) %*% matrixdist::matrix_power(k, transMatrix_norm)))
+    # expm Version
+    # timeevol <- c(timeevol, as.vector(initialState %*% (transMatrix_norm2 %^% k)))   
+      }
+  
+  #timeevol_56 <- timeevol
+  # print(timeevol_56)
+  timeevol <- base::matrix(timeevol, nrow = k + 1, ncol = length(initialState), byrow = TRUE)
+  return(timeevol)
+}
+
+############################################################################## ##
+# function 4: Residual function
+#
+# step 1: Calculate sum of squared deviations of estimated to hypothetical values  
+# step 2: Return sum of squared deviations
+#
+############################################################################## ##
+
+# Residual function
+
+residual <- function(variables) {
+  data <- df_diseasestates_input[1:number_of_cycles_t, ]
+  return(sum((data - model_diseasestates(variables))^2))
+}
+
+############################################################################## ##
+#  
+# function 5: timeseries_prob
+# 
+# step 1: dynamic imputation in column 9 for rows 1 to 8
+# step 2: call "function 1: recalculate_main_diagonal"
+#
+# -- validated --
+############################################################################## ##
+
+timeseries_prob <- function(transMatrix, x0, timelength) {
+  n_states <- length(x0)
+  result <- matrix(0, nrow = timelength, ncol = n_states)
+  x_k <- x0 #todo sprechender Name für x_k
+  result[1, ] <- x_k
+  
+  for (k in 2:timelength) {
+    if (k < 1000) {
+      transMatrix[1:8, 9] <- remission_prob[k, ]            # step 1: dynamic imputation in column 9 for rows 1 to 8
+      transMatrix <- recalculate_main_diagonal(transMatrix) # step 2
+    }
+    x_k <- x_k %*% transMatrix
+    result[k, ] <- x_k
+  }
+  return(result)
+}
+
+# Code zum Testen der Funktion
+# x0 <- c(1, 0, 0, 0, 0, 0, 0, 0, 0)
+# timelength <- 8000
+# t <- timeseries_prob(transMatrix, x0, timelength)
+# t (8000 Zeilen 9 Spalten)
+# function timeseries_MC_vec has been removed here.
+
+############################################################################## ##
+#                                          
+#  function 6: steadystate_MC              
+#  Steady state from Monte Carlo           
+#  function: steadystate_MC               
+#
+#  -- not yet validated --                                         
+############################################################################# ##
+
+ steadystate_MC <- function(transMatrix, x0, timelength, n_patients, simulationcycles) {
+  result <- matrix(0, nrow = ((simulationcycles+1) * timelength), ncol = length(x0)) # leere Matrix mit 24.000 Zeilen erwartet waren 16.000
+  t <- timeseries_prob(transMatrix, x0, timelength)
+  
+  for (k in 1:((simulationcycles * timelength))) {
+    result[k:(k + timelength - 1), ] <- result[k:(k + timelength - 1), ] + t
+    result[(k + timelength):nrow(result), ] <- result[(k + timelength):nrow(result), ] + t[nrow(t), ] #dasselbe aber ergänze den wert aus der letzten Zeile von t
+  }
+  
+  return(result[1:k, ])
+}
+
+# Alternative
+
+#steadystate_MC <- function(transMatrix, x0, timelength, n_patients, simulationcycles) {
+#  result <- matrix(0, nrow = (simulationcycles + 1) * timelength, ncol = length(x0))
+#  t <- timeseries_prob(transMatrix, x0, timelength)
+#  for (k in 1:(simulationcycles * timelength)) {
+#    result[k:(k + timelength), ] <- result[k:(k + timelength), ] + t
+#    result[(k + timelength + 1):nrow(result), ] <- result[(k + timelength + 1):nrow(result), ] + t[nrow(t), ]
+#  }
+#  return(list(result[1:k, ], t))
+#}
+
+
+# function test code
+#
+# x0 <- c(1, 0, 0, 0, 0, 0, 0, 0, 0)
+# timelength <- 8000
+# n_patients <- 10
+# simulationcycles <- 2
+# steadystate_MC (transMatrix, x0, timelength, n_patients, simulationcycles)
+# xxx1 <- matrix(0, nrow = ((simulationcycles) * timelength), ncol = length(x0))
+# xxx1
+
+
+############################################################################# ##
+#
+#  function 7: get_steadystate
+#  Calculate steady state
+#  Function: get_steadystate
+#
+############################################################################# ##
+
+#todo parametrisieren --> Parameter eventuell aus der Funktion ziehen und Werte global steuern. 
+
+get_steadystate <- function(transMatrix) {
+  x0 <- c(1, 0, 0, 0, 0, 0, 0, 0, 0)
+  timelength <- 8000
+  n_patients <- 10
+  simulationcycles <- 1
+  result <- steadystate_MC(transMatrix, x0, timelength, n_patients, simulationcycles) # call function steadystate_MC
+  normvec <- apply(result, 1, sum)
+  result_norm <- result / matrix(normvec, nrow = length(normvec), ncol = ncol(result), byrow = TRUE)
+  result_norm_noremission <- result_norm[nrow(result_norm), 1:8] / sum(result_norm[nrow(result_norm), 1:8]) * 100
+  return(result_norm_noremission) 
+}
+
+############################################################################# ##
+#
+#  function 8: reshape_steadystate_variables
+#  step 1: calculate mean_UCT
+#  step 2: calculate share_highUCT
+#  step 3: define steadystate_df & colnames
+#  step 4: reduce number of states by group aggregation
+#
+############################################################################# ##
+
+# Derive output variables
+
+reshape_steadystate_variables <- function(steadystate, states, UCTMatrix, cutoff_highUCT) {
+  mean_UCT <- sum(steadystate / 100 * UCTMatrix[1, 1:9])
+  share_highUCT <- sum((UCTMatrix[1, 1:9] >= cutoff_highUCT) * steadystate)
+  steadystate_df <- as.data.frame(matrix(steadystate, nrow = 1, ncol = 9, byrow = TRUE))
+  colnames(steadystate_df) <- states[1:9]
+  aggregated_states_df <- data.frame(
+    Symptomatic = steadystate_df$Symptomatic + steadystate_df$No_diagnosis_virt,
+    Diagnosed = steadystate_df$Diagnosed + steadystate_df$No_treatment_virt + steadystate_df$Treatment_start,
+    Treated_uncontrolled = steadystate_df$Uncontrolled,
+    Treated_controlled = steadystate_df$Controlled,
+    Treated_symptom_free = steadystate_df$Symptom_free
+  )
+  return(list(mean_UCT = mean_UCT, share_highUCT = share_highUCT, aggregated_states_df = aggregated_states_df))
+}
+
+############################################################################# ##
+
+
+
+sessionInfo() # 
+
+# Measure for run time: start_time
+start_runtime <- Sys.time()
+
+# Parameter List
+
+path_figures_folder <- "figures" 
+path_data_folder <- "data"
+
+dir.create(path_figures_folder, showWarnings = FALSE)
+dir.create(path_data_folder, showWarnings = FALSE)
+
+path_source_file       <- "20230117_Urticaria Markov Transition Rates_v07.xlsx"
+excel_sheet_name_rates <- "Export_rates"
+excel_sheet_name_uct   <- "Export_UCT"
+excel_statesfitting   <- "Export_statesfitting"
+excel_remission   <- "Export_remission"
+
+
+## Parameters for model ############################################
+
+# Fit disease states
+number_of_cycles_t <- 99 #adjustable
+
+# Matrix with States for each week 
+states_to_fit <- matrix(0, nrow = number_of_cycles_t, ncol = 3)
+t_vec <- c(6, 18, 30) ## week of interventions
+t_vec <- t_vec - 5  ## Adjustment?
+
+last_elem <- tail(t_vec, n = 1)  # Get the last element of t_vec
+additional_values <- seq(from = last_elem + 1, to = number_of_cycles_t, by = 10)
+t_vec_new <- c(t_vec, additional_values)
+
+# Define values for transition matrix
+values_to_assign <- matrix(c(0.614, 0.3088, 0.0772,
+                             0.1842, 0.65264, 0.16316,
+                             0.05526, 0.65264, 0.2921), ncol = 3, byrow = TRUE)
+
+# values_to_assign
+# Assign values to specific rows in states_to_fit matrix
+
+# row then column
+
+for (targetrow in 1:number_of_cycles_t)
+     {
+  if (targetrow == t_vec[1]) {
+    states_to_fit[targetrow,] <- values_to_assign[1,]
+  }
+  else if (targetrow < t_vec[2])
+  {
+    states_to_fit[targetrow,] <- c(0,0,0)
+  }
+  else if (targetrow == t_vec[2])
+  {
+    states_to_fit[targetrow,] <- values_to_assign[2,]
+  }
+  else if (targetrow < t_vec[3])
+  {
+    states_to_fit[targetrow,] <- c(0,0,0)
+  }
+  else {
+    states_to_fit[targetrow,] <- values_to_assign[3,]
+  }
+  }
+
+
+# print(states_to_fit)
+# print(t_vec)
+# print(t_vec_new)
+
+## ##################################### #
+## Initial Parameters for 3x3 Matrix ##
+ 
+start_params <- c(0.838, 0.162, 0.00, 0.009, 0.904, 0.087, 0.009, 0.192, 0.799) 
+
+## Read Data from Excel File ####
+
+# Check if the file exists
+if (file.exists(path_source_file)) {
+  # Read data frame from Excel file
+  df_rates <- readxl::read_excel(path_source_file, sheet = excel_sheet_name_rates)
+  df_UCT   <- readxl::read_excel(path_source_file, sheet = excel_sheet_name_uct)
+  df_diseasestates_input <- readxl::read_excel(path_source_file, sheet = excel_statesfitting)
+  df_remission <- readxl::read_excel(path_source_file, sheet = excel_remission)
+} else {
+  print("Input file not found.") #permission problems or no file
+}
+
+## Print previously read data
+# print(df_rates)
+# print(df_UCT)
+# print(df_diseasestates_input)
+# print(df_remission)
+
+# Fit the model using least squares -- #todo different algorithm to python
+out <- stats::optim(start_params, residual, method = "L-BFGS-B", lower = rep(0, 9), upper = rep(1, 9))
+
+# opt <- trustOptim::trust.optim(start_params, residual, grad, hess, method="Sparse")
+
+# diseaseprobabilities_fitted is for control
+# Reshape der 1D-Array in eine 3x3-Matrix
+  diseaseprobabilities_fitted <- matrix(out$par, nrow = 3, ncol = 3, byrow = TRUE)
+  
+# Normalisierung der Zeilen der Matrix mit der L1-Norm
+  diseaseprobabilities_fitted <- t(apply(diseaseprobabilities_fitted, 1, function(row) row / sum(abs(row))))
+  
+# Anzeige der normalisierten Matrix 
+  print(diseaseprobabilities_fitted)
+  
+## ###################################### ##
+## Export Model and actual Data ##########
+## ###################################### ##
+    
+  readr::write_rds(model_diseasestates(out$par), file.path(path_data_folder, "diseasestates_model.rds"))
+  readr::write_csv(as.data.frame(model_diseasestates(out$par)), file.path(path_data_folder, "diseasestates_model.csv"))
+  writexl::write_xlsx(as.data.frame(model_diseasestates(out$par)), file.path(path_data_folder, "diseasestates_model.xlsx"))
+  
+  df_diseasestates_input_df <- as.data.frame(df_diseasestates_input)
+  readr::write_rds(df_diseasestates_input_df, file.path(path_data_folder, "diseasestates_input.rds"))
+  readr::write_csv(df_diseasestates_input_df, file.path(path_data_folder, "diseasestates_input.csv"))
+  writexl::write_xlsx(df_diseasestates_input_df, file.path(path_data_folder, "diseasestates_input.xlsx"))
+
+# ####################################### #
+## Plot the model and the actual data ####
+# ####  03_plot_state_probabilities.r #### #
+# ####################################### #
+
+## ########################################################################## ##  
+  
+# Calculate and display the fitted disease probabilities
+# Python values for consistency --> #todo Check algorithm 
+# array([[8.83546195e-01, 1.16439063e-01, 1.47418074e-05],
+#  [5.21009280e-03, 9.55420736e-01, 3.93691710e-02],
+#  [7.23381020e-03, 7.66933782e-02, 9.16072812e-01]])
+  
+diseaseprobabilities_fitted <- prop.table(matrix(out$par, nrow = 3, ncol = 3), margin = 1)
+
+diseaseprobabilities_fitted <- matrix(c(0.883546195, 0.116439063, 0.000047418,
+                                        0.005210092, 0.955420736, 0.039369171,
+                                        0.007233810, 0.076693378, 0.916072815), ncol = 3, byrow = TRUE)
+
+# print(diseaseprobabilities_fitted)
+# Convert data frames to matrices
+
+rateMatrix <- as.matrix(df_rates)
+UCTMatrix <- as.matrix(df_UCT)
+states <- colnames(rateMatrix)
+
+######################################## #
+# Define Transition Matrix  ####
+######################################## #
+
+time <- 1  # time for rateMatrix in weeks
+transMatrix <- 1 - exp(-rateMatrix / time)
+transMatrix[6:8, 6:8] <- diseaseprobabilities_fitted
+
+# set diagonal elements to 0 and calculate diagonal elements as 1-(row sum)
+
+transMatrix <- recalculate_main_diagonal(transMatrix)
+check_matrix_row_sum(transMatrix)
+
+# Print transition matrix
+# Save matrices and states to CSV files
+
+readr::write_csv(as.data.frame(rateMatrix), file.path(path_data_folder, "rateMatrix.csv")) 
+readr::write_csv(as.data.frame(transMatrix), file.path(path_data_folder, "transMatrix.csv"))
+readr::write_csv(as.data.frame(states), file.path(path_data_folder, "states.csv"))
+
+#### Silent header? 
+#### Other types - .xlsx or .rds? --> Rüdiger Excel Export
+
+print(round(transMatrix,3))
+print(round(transMatrix[1:8, 9],3))
+print(states)
+
+
+## ####################################### # 
+##    Time Evolution and Steady State   #### 
+## ####################################### # 
+
+remission_prob <- as.matrix(df_remission)
+print(round(df_remission[100,],3))
+transMatrix [1:8, 9] <- remission_prob[100,]
+print(transMatrix)
+
+
+########################################### #
+#       Definition of Interventions      ####
+########################################### #
+
+# Awareness Campaign improves Diagnosis rate by Factor var_diagrate
+
+var_diagrate <- 1.42
+transMatrix_awa1 <- transMatrix  
+
+transMatrix_awa1[1, 2] <- transMatrix[1, 2] * var_diagrate
+transMatrix_awa1[1, 3] <- transMatrix[1, 3] * var_diagrate
+
+print(transMatrix)
+print(transMatrix_awa1)
+
+# Educational Effect
+# KOL diagnosis program | 36% higher diagnosis rate 
+
+transMatrix_edu1 <- transMatrix
+var_diagratio <- 0.36
+
+transMatrix_edu1[1, 2] <- transMatrix[1, 2] + transMatrix[1, 3] * var_diagratio 
+transMatrix_edu1[1, 3] <- transMatrix[1, 3] - transMatrix[1, 3] * var_diagratio
+
+print(transMatrix)
+print(transMatrix_edu1)
+
+# Treatment Effect
+# Treatment ratio (DMP)
+
+transMatrix_dmp1 <- transMatrix
+var_treatmentratio <- 0.18
+
+transMatrix_dmp1[2, 4] <- transMatrix[2, 4] + transMatrix[2, 4] * var_treatmentratio
+transMatrix_dmp1[2, 5] <- transMatrix[2, 5] - transMatrix[2, 4] * var_treatmentratio
+
+print(transMatrix)
+print(transMatrix_dmp1)
+
+
+# Combined Effect of all inventions
+# treatment ratio (all interventions)
+
+
+transMatrix_all1 <- transMatrix
+
+transMatrix_all1[1, 2] <- (transMatrix[1, 2] + transMatrix[1, 3] * var_diagratio) * var_diagrate  
+transMatrix_all1[1, 3] <- (transMatrix[1, 3] - transMatrix[1, 3] * var_diagratio) * var_diagrate  
+transMatrix_all1[2, 4] <- transMatrix[2, 4] + transMatrix[2, 4] * var_treatmentratio  
+transMatrix_all1[2, 5] <- transMatrix[2, 5] - transMatrix[2, 4] * var_treatmentratio
+
+print(transMatrix)
+print(transMatrix_all1)
+
+
+#################################  ##
+##    Simulations / Iterations   ####
+################################# ##
+
+print(round(transMatrix,3))
+
+transMatrix
+ 
+steadystate_statusquo <- get_steadystate(transMatrix)
+steadystate_edu1 <- get_steadystate(transMatrix_edu1)
+steadystate_awa1 <- get_steadystate(transMatrix_awa1)
+steadystate_dmp1 <- get_steadystate(transMatrix_dmp1)
+steadystate_all1 <- get_steadystate(transMatrix_all1)
+
+
+steadystate_statusquo
+steadystate_edu1
+steadystate_awa1
+steadystate_dmp1
+steadystate_all1
+
+################################## #
+
+cutoff_highUCT <- 12
+
+reshaped_steadystate_statusquo <- reshape_steadystate_variables(steadystate_statusquo, states, UCTMatrix, cutoff_highUCT)
+
+reshaped_steadystate_edu1 <- reshape_steadystate_variables(steadystate_edu1, states, UCTMatrix, cutoff_highUCT)
+reshaped_steadystate_awa1 <- reshape_steadystate_variables(steadystate_awa1, states, UCTMatrix, cutoff_highUCT)
+reshaped_steadystate_dmp1 <- reshape_steadystate_variables(steadystate_dmp1, states, UCTMatrix, cutoff_highUCT)
+reshaped_steadystate_all1 <- reshape_steadystate_variables(steadystate_all1, states, UCTMatrix, cutoff_highUCT)
+
+
+
+#todo wegspeichern
+
+#transMatrix_awa2 <- recalculate_main_diagonal(transMatrix_awa1)
+#check_matrix_row_sum (transMatrix_awa2)
+
+reshaped_steadystate_statusquo
+reshaped_steadystate_edu1
+reshaped_steadystate_awa1
+reshaped_steadystate_dmp1
+reshaped_steadystate_all1
+
+
+################################## #
+#           Plotting           ### #
+################################## #
+
+# Barplot erstellen
+
+par(mar=c(3, 9, 2, 1) + 3)
+barplot(
+  t(reshaped_steadystate_statusquo$aggregated_states_df),  # Transponieren der Daten für die richtige Anordnung
+  beside = TRUE,           # Gruppierte Balken nebeneinander
+  col = rainbow(5),        # Farben für die Balken
+  col.axis = "darkblue",
+  col.main = "darkblue",
+#  col.lab = "darkblue",
+  names.arg = colnames(reshaped_steadystate_statusquo$aggregated_states_df),  # Beschriftung der x-Achse
+  main = "Steady-State Status Quo",  # Titel des Diagramms
+  ylab = "",las =1,       # Beschriftung der x-Achse
+  xlab = "Share",         # Beschriftung der y-Achse
+  horiz = TRUE,
+#  legend.text = colnames(reshaped_steadystate_statusquo$aggregated_states_df),  # Legendenbeschriftung
+ # args.legend = list(x = "topright")  # Legendenposition
+)
+
+
+
