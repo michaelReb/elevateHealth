@@ -1,0 +1,102 @@
+﻿<Page
+    x:Class="NMSE.Views.SetupCheckPage"
+    Style="{DynamicResource MahApps.Styles.Page}"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:properties="clr-namespace:NMSE.Properties"
+    mc:Ignorable="d"
+    d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Style="{StaticResource PageTitleStyle}"
+            Margin="{StaticResource MediumLeftMargin}"
+            Text="{x:Static properties:Resources.SetupCheckPageTitle}" />
+        <Grid
+            Grid.Row="1"
+            Margin="{StaticResource MediumLeftRightMargin}"
+            Background="{DynamicResource MahApps.Brushes.Gray10}">
+            <!--
+            The Mahapps Gray10 color represents where you should place your content.
+            Place your content here.
+            -->
+
+      <StackPanel>
+        <Label Style="{StaticResource PageLabelStyle}">R-Version</Label>
+        <ComboBox x:Name="RVersionSelector"
+                  Width="500" HorizontalAlignment="Left"
+                  SelectionChanged="RVersionSelector_SelectionChanged" />
+        <TextBlock x:Name="RStatusDescription" Width="500"></TextBlock>
+
+        <Label Style="{StaticResource PageLabelStyle}">Necessary R-Libraries</Label>
+        <TextBlock x:Name="RLibrariesStatusDesciption" Width="500"></TextBlock>
+
+
+
+
+        <ListView x:Name="RLibrariesOverview"
+                  AlternationCount="2"
+                  Height="400" Width="500"
+                  HorizontalAlignment="Left"
+                  Margin="{StaticResource SmallLeftTopRightBottomMargin}"
+                  BorderBrush="Black" BorderThickness="2">
+
+          <ListView.ItemContainerStyle>
+            <Style TargetType="ListViewItem">
+              <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                  <Setter Property="Background" Value="White" />
+                </Trigger>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                  <Setter Property="Background" Value="LightGray" />
+                </Trigger>
+              </Style.Triggers>
+            </Style>
+          </ListView.ItemContainerStyle>
+
+          <ListView.View>
+            <GridView>
+
+
+              <GridViewColumn Header="State">
+                <GridViewColumn.CellTemplate>
+                  <DataTemplate>
+                    <TextBlock
+                      Text="{Binding LibraryStateSymbol}"
+                      Margin="{StaticResource MediumLeftTopRightBottomMargin}" />
+                  </DataTemplate>
+                </GridViewColumn.CellTemplate>
+              </GridViewColumn>
+
+
+              <GridViewColumn Header="Library">
+                <GridViewColumn.CellTemplate>
+                  <DataTemplate>
+                    <TextBlock
+                      Grid.Row="0" Grid.Column="1"
+                      TextWrapping="Wrap"
+                      FontFamily="Arial"
+                      FontSize="14">
+                     <Run FontWeight="Bold" Text="{Binding LibraryName}" FontSize="16"></Run><LineBreak />
+                      <Run FontWeight="Normal" Text="{Binding LibraryDescription}"></Run>
+                    </TextBlock>
+                  </DataTemplate>
+                </GridViewColumn.CellTemplate>
+              </GridViewColumn>
+
+            </GridView>
+          </ListView.View>
+
+        </ListView>
+
+        <Button HorizontalAlignment="Left">Check necessary libraries again</Button>
+        
+      </StackPanel>
+        </Grid>
+    </Grid>
+</Page>

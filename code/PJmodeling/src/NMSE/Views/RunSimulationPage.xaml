@@ -1,0 +1,97 @@
+﻿<Page x:Name="PageRoot"
+      x:Class="NMSE.Views.RunSimulationPage"
+      Style="{DynamicResource MahApps.Styles.Page}"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:properties="clr-namespace:NMSE.Properties"
+      xmlns:local="clr-namespace:NMSE"
+      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+      xmlns:imfrastructure="clr-namespace:NMSE.Imfrastructure"
+      mc:Ignorable="d"
+      d:DesignHeight="800" d:DesignWidth="800">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="48" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <TextBlock Grid.Row="0" Style="{StaticResource PageTitleStyle}"
+               Text="{x:Static properties:Resources.RunSimulationPageTitle}" />
+    <Grid Grid.Row="1"
+      Margin="{StaticResource MediumLeftRightMargin}"
+      Background="{DynamicResource MahApps.Brushes.Gray10}">
+      <!--
+            The Mahapps Gray10 color represents where you should place your content.
+            Place your content here.
+            -->
+
+
+      <StackPanel>
+
+        <TextBlock Margin="{StaticResource SmallTopMargin}" Style="{StaticResource SubtitleTextStyle}">Tasks</TextBlock>
+
+        <StackPanel Margin="{StaticResource SmallTopMargin}">
+
+          <mah:ToggleSwitch OffContent="Do NOT generate R-Code"
+            OnContent="Generate R-code"
+            IsEnabled="False"
+            IsOn="True" />
+
+          <mah:ToggleSwitch OffContent="Do NOT show R-Output"
+                            OnContent="Show R-Output"
+                            IsOn="{Binding ShowROutput, ElementName=PageRoot}"
+                            IsEnabled="{Binding IsNotRuning, ElementName=PageRoot}"/>
+
+          <mah:ToggleSwitch OffContent="Do NOT run simulation code"
+                            OnContent="Run simulation code"
+                            IsOn="True"
+                            IsEnabled="{Binding IsNotRuning, ElementName=PageRoot}"/>
+          
+          <Button Width="200" HorizontalAlignment="Left"
+                  Style="{StaticResource ImportantButtonStyle}"
+                  Margin="{StaticResource MediumLeftTopRightBottomMargin}"
+                  Click="Run_Button_Click"
+                  IsEnabled="{Binding IsNotRuning, ElementName=PageRoot}"
+                  Content="Run" />
+
+
+          <ProgressBar x:Name="PBar"
+                       Width="600" Height="10"
+                       Minimum="0" Maximum="100" Value="0"
+                       IsEnabled="False" HorizontalAlignment="Left"
+                       Margin="{StaticResource MediumLeftTopRightBottomMargin}">
+            <ProgressBar.Style>
+              <Style TargetType="ProgressBar">
+                <Setter Property="IsIndeterminate" Value="False"/>
+                <Style.Triggers>
+                  <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                      <Condition Binding="{Binding IsRuning, ElementName=PageRoot}" Value="True"/>
+                      <Condition Binding="{Binding Value, ElementName=PBar}" Value="0"/>
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="IsIndeterminate" Value="True"/>
+                  </MultiDataTrigger>
+                </Style.Triggers>
+              </Style>
+            </ProgressBar.Style>
+          </ProgressBar>
+
+          <ListView x:Name="ProgressMessages"
+                    Width="600" Height="300"
+                    Margin="{StaticResource MediumLeftTopRightBottomMargin}"
+                    IsEnabled="False"
+                    HorizontalAlignment="Left"
+                    imfrastructure:ScrollBehavior.Kind="AutoScrollToEnd"/>
+
+
+        </StackPanel>
+
+
+      </StackPanel>
+
+
+    </Grid>
+  </Grid>
+</Page>

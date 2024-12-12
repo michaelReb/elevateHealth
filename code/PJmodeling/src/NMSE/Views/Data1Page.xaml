@@ -1,0 +1,340 @@
+﻿<Page
+    x:Class="NMSE.Views.Data1Page"
+    Style="{DynamicResource MahApps.Styles.Page}"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:properties="clr-namespace:NMSE.Properties"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:local="clr-namespace:NMSE"
+    DataContext="{Binding Source={x:Static local:SimProb.Instance}}"
+    mc:Ignorable="d"
+    d:DesignHeight="450" d:DesignWidth="1800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Style="{StaticResource PageTitleStyle}"
+            Margin="{StaticResource MediumLeftMargin}"
+            Text="{x:Static properties:Resources.Data1PageTitle}" />
+        <Grid
+            Grid.Row="1"
+            Margin="{StaticResource MediumLeftRightMargin}"
+            Background="{DynamicResource MahApps.Brushes.Gray10}">
+            <!--
+            The Mahapps Gray10 color represents where you should place your content.
+            Place your content here.
+            -->
+
+
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="800" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="300"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0">
+
+          <Image
+x:Name="BaseModelExample"
+Source="/Images/patient-flow.png"
+Margin="{StaticResource SmallLeftTopRightBottomMargin}"
+MinWidth="150" MaxWidth="250"
+HorizontalAlignment="Center"
+    MouseDown="BaseModelExample_MouseDown"
+  ToolTip="Click to enlarge" />
+
+
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text=" Please click on the image to enlarge it" HorizontalAlignment="Center"/>
+          </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.Column="1">
+
+
+          <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <FlowDocument IsColumnWidthFlexible="False" PageWidth="1000" ColumnWidth="999999">
+
+              <Table>
+                <!-- Define 4 columns -->
+                <Table.Columns>
+                  <TableColumn Width="200"/>
+                  <TableColumn Width="50"/>
+                  <TableColumn Width="250"/>
+                  <TableColumn Width="200"/>
+                </Table.Columns>
+                <!-- Add 7+1 rows -->
+                <TableRowGroup>
+                  <!-- Row 1 -->
+                  <TableRow>
+                    <TableCell Style="{StaticResource TableHeaderTop}">
+                      <Paragraph>Parameter</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource TableHeaderTop}">
+                      <Paragraph></Paragraph> <!-- for aligned info boxes -->
+                    </TableCell>
+                    <TableCell Style="{StaticResource TableHeaderTop}">
+                      <Paragraph>Transition in the model</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource TableHeaderTop}">
+                      <Paragraph>Adapted value according to indication and country [%]</Paragraph>
+                    </TableCell>
+                  </TableRow>
+                  <!-- Row 2 -->
+                  <TableRow>
+                    <TableCell Style="{StaticResource TableHeaderLeft}">
+                      <Paragraph>Prevalence</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph></Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>healthy → symptomatic</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>
+                        <mah:NumericUpDown
+                          x:Name="HealthyToSymptomatic"
+                          HorizontalAlignment="Left"
+                          Width="100"
+                          Value="{Binding ParamPrevalence, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                          Minimum="0"
+                          Maximum="1"
+                          Interval="0.001"
+                          StringFormat="P1"
+                          NumericInputMode="Decimal"
+                          IsEnabled="False" />
+                      </Paragraph>
+                    </TableCell>
+                  </TableRow>
+                  <!-- Row 3 -->
+                  <TableRow>
+                    <TableCell Style="{StaticResource TableHeaderLeft}">
+                      <Paragraph>Diagnosis Rate</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>
+                        <InlineUIContainer>
+                          <Border>
+                            <TextBlock Style="{StaticResource InfoBox}" />
+                            <Border.ToolTip>
+                              <ToolTip MaxWidth="200">
+                              <TextBlock Text="Please fill in your country- and indication specific diagnosis rate in %." TextWrapping="Wrap" />
+                              </ToolTip>
+                            </Border.ToolTip>
+                          </Border>
+                        </InlineUIContainer>
+                      </Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>symptomatic → diagnosed</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>
+                        <mah:NumericUpDown
+x:Name="SymptomaticToDiagnosed"
+HorizontalAlignment="Left"
+Width="100"
+Value="{Binding ParamDiagnosisRate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+Minimum="0"
+Maximum="1"
+Interval="0.001"
+StringFormat="P1"
+NumericInputMode="Decimal" />
+                      </Paragraph>
+                    </TableCell>
+                  </TableRow>
+
+                  <!-- Row 4 -->
+                  <TableRow>
+                    <TableCell Style="{StaticResource TableHeaderLeft}">
+                      <Paragraph>Treatment Rate</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>
+                        <InlineUIContainer>
+                          <Border>
+                            <TextBlock Style="{StaticResource InfoBox}" />
+                            <Border.ToolTip>
+                              <ToolTip MaxWidth="200">
+                              <TextBlock Text="Please fill in how many patients will recieve indication specific treatment after they got their diagnosis in %" TextWrapping="Wrap" />
+                              </ToolTip>
+                            </Border.ToolTip>
+                          </Border>
+                        </InlineUIContainer>
+                      </Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>diagnosed → treatment start</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>
+                        <mah:NumericUpDown
+  x:Name="DiagnosedToTreatmentStart"
+  HorizontalAlignment="Left"
+  Width="100"
+  Value="{Binding ParamTreatmentRate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+  Minimum="0"
+  Maximum="1"
+  Interval="0.001"
+  StringFormat="P1"
+  NumericInputMode="Decimal" />
+                      </Paragraph>
+                    </TableCell>
+                  </TableRow>
+
+                  <!-- Row 5 -->
+                  <TableRow>
+                    <TableCell Style="{StaticResource TableHeaderLeft}">
+                      <Paragraph>Uncontrolled disease with standard of care treatment</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>
+                        <InlineUIContainer>
+                          <Border>
+                            <TextBlock Style="{StaticResource InfoBox}" />
+                            <Border.ToolTip>
+                              <ToolTip MaxWidth="200">
+                              <TextBlock Text="Please fill in how many patients will be not symptom-controlled upon medical therapy in % (e.g. how many patients have an UCT score between 0-11 with treatment)" TextWrapping="Wrap" />
+                              </ToolTip>
+                            </Border.ToolTip>
+                          </Border>
+                        </InlineUIContainer>
+                      </Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>treatment start → uncontrolled</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>
+                        <mah:NumericUpDown
+  x:Name="TreatmentStartToUncontrolled"
+  HorizontalAlignment="Left"
+  Width="100"
+  Value="{Binding ParamUncontrolledStandard, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+  Minimum="0"
+  Maximum="1"
+  Interval="0.001"
+  StringFormat="P1"
+  NumericInputMode="Decimal" />
+                      </Paragraph>
+                    </TableCell>
+                  </TableRow>
+
+                  <!-- Row 6 -->
+                  <TableRow>
+                    <TableCell Style="{StaticResource TableHeaderLeft}">
+                      <Paragraph>Controlled disease with standard of care treatment</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>
+                        <InlineUIContainer>
+                          <Border>
+                            <TextBlock Style="{StaticResource InfoBox}" />
+                            <Border.ToolTip>
+                              <ToolTip MaxWidth="200">
+                              <TextBlock Text="Please, fill in how many patients will be symptom-controlled upon medical therapy in % (e.g. how many patients have an UCT score between 12-15 with treatment)" TextWrapping="Wrap" />
+                              </ToolTip>
+                            </Border.ToolTip>
+                          </Border>
+                        </InlineUIContainer>
+                      </Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>treatment start → uncontrolled</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>
+                        <mah:NumericUpDown
+  x:Name="ControlledWithStandard"
+  HorizontalAlignment="Left"
+  Width="100"
+  Value="{Binding ParamaControlledStandard, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+  Minimum="0"
+  Maximum="1"
+  Interval="0.001"
+  StringFormat="P1"
+  NumericInputMode="Decimal" />
+                      </Paragraph>
+                    </TableCell>
+                  </TableRow>
+
+                  <!-- Row 7 -->
+                  <TableRow>
+                    <TableCell Style="{StaticResource TableHeaderLeft}">
+                      <Paragraph>Symptom free disease with standard of care treatment</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>
+                        <InlineUIContainer>
+                          <Border>
+                            <TextBlock Style="{StaticResource InfoBox}" />
+                            <Border.ToolTip>
+                              <ToolTip MaxWidth="200">
+                                <TextBlock Text="Please, fill in how many patients will be symptom-free upon medical therapy in % (e.g. how many patients have an UCT score of 16 with treatment)" TextWrapping="Wrap" />
+                              </ToolTip>
+                            </Border.ToolTip>
+                          </Border>
+                        </InlineUIContainer>
+                      </Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>treatment start → symptom_free</Paragraph>
+                    </TableCell>
+                    <TableCell Style="{StaticResource ContentCell}">
+                      <Paragraph>
+                        <mah:NumericUpDown
+  x:Name="SymptomFreeStandardCare"
+  HorizontalAlignment="Left"
+  Width="100"
+  Value="{Binding ParamSymptomFreeStandard, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+  Minimum="0"
+  Maximum="1"
+  Interval="0.001"
+  StringFormat="P1"
+  NumericInputMode="Decimal" />
+                      </Paragraph>
+                    </TableCell>
+                  </TableRow>
+
+
+                  <TableRow>
+                    <TableCell Style="{StaticResource TableHeaderLeft}" ColumnSpan="3">
+                      <Paragraph>
+                        <InlineUIContainer>
+                          <Button x:Name="ResetPatientFlowTable" Width="300" HorizontalAlignment="Center" Content="Reset to default values (Uticaria in Germany)" Click="ResetPatientFlowTable_Click"/>
+                        </InlineUIContainer>
+                      </Paragraph>
+                    </TableCell>
+                  </TableRow>
+                  <!-- Add similar rows here -->
+                </TableRowGroup>
+
+
+
+
+              </Table>
+
+            </FlowDocument>
+
+          </ScrollViewer>
+          
+
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1">
+          
+        </StackPanel>
+      </Grid>
+
+
+
+    </Grid>
+    </Grid>
+</Page>

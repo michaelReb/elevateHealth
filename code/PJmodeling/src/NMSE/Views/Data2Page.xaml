@@ -1,0 +1,292 @@
+﻿<Page
+    x:Class="NMSE.Views.Data2Page"
+    Style="{DynamicResource MahApps.Styles.Page}"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:properties="clr-namespace:NMSE.Properties"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:local="clr-namespace:NMSE"
+    DataContext="{Binding Source={x:Static local:SimProb.Instance}}"
+    mc:Ignorable="d"
+    d:DesignHeight="450" d:DesignWidth="1800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Style="{StaticResource PageTitleStyle}"
+            Margin="{StaticResource MediumLeftMargin}"
+            Text="{x:Static properties:Resources.Data2PageTitle}" />
+        <Grid
+            Grid.Row="1"
+            Margin="{StaticResource MediumLeftRightMargin}"
+            Background="{DynamicResource MahApps.Brushes.Gray10}">
+            <!--
+            The Mahapps Gray10 color represents where you should place your content.
+            Place your content here.
+            -->
+
+
+      <StackPanel>
+
+
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="600" />
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <StackPanel Grid.Row="0" Grid.Column="0">
+
+            <Image
+              x:Name="BaseModelExample"
+              Source="/Images/time-relations.png"
+              Margin="{StaticResource SmallLeftTopRightBottomMargin}"
+              MinWidth="150" MaxWidth="250"
+              HorizontalAlignment="Center"
+              MouseDown="BaseModelExample_MouseDown"
+              ToolTip="Click to enlarge" />
+
+
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text=" Please click on the image to enlarge it" HorizontalAlignment="Center"/>
+            </StackPanel>
+          </StackPanel>
+
+          <StackPanel Grid.Row="0" Grid.Column="1">
+
+
+
+            <FlowDocumentScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+              <FlowDocument IsColumnWidthFlexible="False" PageWidth="1000" ColumnWidth="999999">
+
+                <Table>
+                  <!-- Define 4 columns -->
+                  <Table.Columns>
+                    <TableColumn Width="250"/>
+                    <TableColumn Width="50"/>
+                    <TableColumn Width="200"/>
+                    <TableColumn Width="200"/>
+                  </Table.Columns>
+                  <!-- Add 7 rows -->
+                  <TableRowGroup>
+                    <!-- Row 1 -->
+                    <TableRow>
+                      <TableCell Style="{StaticResource TableHeaderTop}">
+                        <Paragraph>Parameter</Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource TableHeaderTop}">
+                        <Paragraph></Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource TableHeaderTop}">
+                        <Paragraph>Transition in the model</Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource TableHeaderTop}">
+                        <Paragraph>Adapted value according to indication  and country [weeks]</Paragraph>
+                      </TableCell>
+                    </TableRow>
+                    <!-- Row 2 -->
+                    <TableRow>
+                      <TableCell Style="{StaticResource TableHeaderLeft}">
+                        <Paragraph>Diagnosis Time</Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource ContentCell}">
+                        <Paragraph>
+                          <InlineUIContainer>
+                            <Border>
+                              <TextBlock Style="{StaticResource InfoBox}" />
+                              <Border.ToolTip>
+                                <ToolTip MaxWidth="200">
+                                  <TextBlock Text="Please fill in your country- and indication-specific value how long it will take from the first onset of symptoms until correct first diagnosis." TextWrapping="Wrap" />
+                                </ToolTip>
+                              </Border.ToolTip>
+                            </Border>
+                          </InlineUIContainer>
+                        </Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource ContentCell}">
+                        <Paragraph>symptomatic → diagnosed</Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource ContentCell}">
+                        <Paragraph>
+                          <mah:NumericUpDown
+  x:Name="HealthyToSymptomatic"
+  HorizontalAlignment="Left"
+  Width="100"
+  Value="{Binding ParamDiagnosisTime}"
+  Minimum="0"
+  Maximum="1000"
+  Interval="1"
+  StringFormat="N0"
+  NumericInputMode="Numbers" />
+                        </Paragraph>
+                      </TableCell>
+                    </TableRow>
+                    
+                    
+                    
+                    <!-- Row 3 -->
+                    <TableRow>
+                      <TableCell Style="{StaticResource TableHeaderLeft}">
+                        <Paragraph>Treatment initiation time</Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource ContentCell}">
+                        <Paragraph>
+                          <InlineUIContainer>
+                            <Border>
+                              <TextBlock Style="{StaticResource InfoBox}" />
+                              <Border.ToolTip>
+                                <ToolTip MaxWidth="200">
+                                  <TextBlock Text="Please fill in how long it will take from the first diagnosis until disease-specif treatment will start." TextWrapping="Wrap" />
+                                </ToolTip>
+                              </Border.ToolTip>
+                            </Border>
+                          </InlineUIContainer>
+                        </Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource ContentCell}">
+                        <Paragraph>diagnosed → treatment start</Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource ContentCell}">
+                        <Paragraph>
+                          <mah:NumericUpDown
+x:Name="SymptomaticToDiagnosed"
+Grid.Row="2" Grid.Column="3"
+HorizontalAlignment="Left"
+Width="100"
+Value="{Binding ParamTreatmentInitiationTime}"
+Minimum="0"
+Maximum="1000"
+Interval="1"
+StringFormat="N0"
+NumericInputMode="Numbers" />
+                        </Paragraph>
+                      </TableCell>
+                    </TableRow>
+
+                    
+                    
+                    <!-- Row 4 -->
+                    <TableRow>
+                      <TableCell Style="{StaticResource TableHeaderLeft}">
+                        <Paragraph>Treatment escalation time 1</Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource ContentCell}">
+                        <Paragraph>
+                          <InlineUIContainer>
+                            <Border>
+                              <TextBlock Style="{StaticResource InfoBox}" />
+                              <Border.ToolTip>
+                                <ToolTip MaxWidth="200">
+                                  <TextBlock Text="Please fill in how long it will take to change therapy in case the patient has an uncontrolled disease upon the first medical therapy." TextWrapping="Wrap" />
+                                </ToolTip>
+                              </Border.ToolTip>
+                            </Border>
+                          </InlineUIContainer>
+                        </Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource ContentCell}">
+                        <Paragraph>treatment start → treatment start</Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource ContentCell}">
+                        <Paragraph>
+                          <mah:NumericUpDown
+  x:Name="DiagnosedToTreatmentStart"
+  Grid.Row="3" Grid.Column="3"
+  HorizontalAlignment="Left"
+  Width="100"
+  Value="{Binding ParamTreatmentEscalationTime1}"
+  Minimum="0"
+  Maximum="1000"
+  Interval="1"
+  StringFormat="N0"
+  NumericInputMode="Numbers" />
+                        </Paragraph>
+                      </TableCell>
+                    </TableRow>
+
+                    
+                    
+                    
+                    <!-- Row 5 -->
+                    
+                    <TableRow>
+                      <TableCell Style="{StaticResource TableHeaderLeft}">
+                        <Paragraph>Treatment escalation time 2</Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource ContentCell}">
+                        <Paragraph>
+                          <InlineUIContainer>
+                            <Border>
+                              <TextBlock Style="{StaticResource InfoBox}" />
+                              <Border.ToolTip>
+                                <ToolTip MaxWidth="200">
+                                  <TextBlock Text="Please fill in how long it will take to change therapy in case the patient has an uncontrolled disease upon the second medical therapy." TextWrapping="Wrap" />
+                                </ToolTip>
+                              </Border.ToolTip>
+                            </Border>
+                          </InlineUIContainer>
+                        </Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource ContentCell}">
+                        <Paragraph>treatment start → controlled</Paragraph>
+                      </TableCell>
+                      <TableCell Style="{StaticResource ContentCell}">
+                        <Paragraph>
+                          <mah:NumericUpDown
+  x:Name="TreatmentStartToUncontrolled"
+  Grid.Row="4" Grid.Column="3"
+  HorizontalAlignment="Left"
+  Width="100"
+  Value="{Binding ParamTreatmentEscalationTime2}"
+  Minimum="0"
+  Maximum="1000"
+  Interval="1"
+  StringFormat="N0"
+  NumericInputMode="Numbers" />
+                        </Paragraph>
+                      </TableCell>
+                    </TableRow>
+                    
+
+                    <TableRow>
+                      <TableCell Style="{StaticResource TableHeaderLeft}" ColumnSpan="3">
+                        <Paragraph>
+                          <InlineUIContainer>
+                            <Button x:Name="ResetTimeRelationsTable" Width="300" HorizontalAlignment="Center" Content="Reset to default values (CSU in Germany)" Click="ResetTimeRelationsTable_Click"/>
+                          </InlineUIContainer>
+                        </Paragraph>
+                      </TableCell>
+                    </TableRow>
+
+
+                    <!-- Add similar rows here -->
+                  </TableRowGroup>
+                </Table>
+
+              </FlowDocument>
+            </FlowDocumentScrollViewer>
+
+          </StackPanel>
+        </Grid>
+
+      </StackPanel>
+
+
+
+
+
+
+
+
+
+
+    </Grid>
+    </Grid>
+</Page>

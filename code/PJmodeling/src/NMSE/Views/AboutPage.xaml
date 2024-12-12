@@ -1,0 +1,47 @@
+﻿<Page
+    x:Class="NMSE.Views.AboutPage"
+    Style="{DynamicResource MahApps.Styles.Page}"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:properties="clr-namespace:NMSE.Properties"
+    mc:Ignorable="d"
+    d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Style="{StaticResource PageTitleStyle}"
+            Margin="{StaticResource MediumLeftMargin}"
+            Text="{x:Static properties:Resources.AboutPageTitle}" />
+        <Grid
+            Grid.Row="1"
+            Margin="{StaticResource MediumLeftRightMargin}"
+            Background="{DynamicResource MahApps.Brushes.Gray10}">
+            <!--
+            The Mahapps Gray10 color represents where you should place your content.
+            Place your content here.
+            -->
+
+      <StackPanel>
+
+
+        <TextBlock Style="{StaticResource  LargeBodyTextStyle}">
+          This application generates R-code which is used to run the simulation and to generate the results.
+          The code ist written into the result directory so you can easily adapt it to specific needs.
+        </TextBlock>
+
+        <TextBlock Style="{StaticResource  LargeBodyTextStyle}">Find the source code, licence and usage documentation at <Hyperlink
+            Style="{StaticResource HyperlinkBaseStyle}"
+            NavigateUri="https://github.com/novartis/"
+            RequestNavigate="Hyperlink_RequestNavigate">github.com/novartis</Hyperlink></TextBlock>
+
+
+        
+      </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
