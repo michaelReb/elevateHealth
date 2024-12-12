@@ -1,0 +1,21 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--Base Styles-->
+    <Style x:Key="BaseListViewItemStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="FontSize" Value="{StaticResource MediumFontSize}" />
+  </Style>
+
+
+  <Style x:Key="ListViewItemSuccess" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource BaseListViewItemStyle}">
+        <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Foreground" Value="Green" />
+  </Style>
+
+  <Style x:Key="ListViewItemFailure" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource BaseListViewItemStyle}">
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Foreground" Value="Red" />
+  </Style>
+
+</ResourceDictionary>

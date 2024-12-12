@@ -1,0 +1,26 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Style x:Key="BaseLabelStyle" TargetType="{x:Type Label}">
+    <Setter Property="FontSize" Value="{StaticResource MediumFontSize}" />
+    <Setter Property="HorizontalAlignment" Value="Left" />
+  </Style>
+
+  <Style x:Key="InputTableLabelStyle" TargetType="{x:Type Label}" BasedOn="{StaticResource BaseLabelStyle}">
+    <Setter Property="FontSize" Value="{StaticResource LargeFontSize}" />
+    <Setter Property="HorizontalAlignment" Value="Right" />
+    <Setter Property="Margin" Value="{StaticResource SmallLeftTopRightBottomMargin}" />
+  </Style>
+
+  <Style x:Key="InputTableLabelStyleSmall" TargetType="{x:Type Label}" BasedOn="{StaticResource BaseLabelStyle}">
+    <Setter Property="FontSize" Value="{StaticResource MediumFontSize}" />
+    <Setter Property="HorizontalAlignment" Value="Right" />
+    <Setter Property="Margin" Value="{StaticResource SmallLeftTopRightBottomMargin}" />
+  </Style>
+
+  <Style x:Key="PageLabelStyle" TargetType="{x:Type Label}" BasedOn="{StaticResource BaseLabelStyle}">
+    <Setter Property="FontSize" Value="{StaticResource LargeFontSize}" />
+
+  </Style>
+
+</ResourceDictionary>

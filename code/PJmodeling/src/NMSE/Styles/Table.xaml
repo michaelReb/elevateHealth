@@ -1,0 +1,32 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--Base Styles-->
+  <Style x:Key="TableHeader" TargetType="{x:Type TableCell}">
+    
+    <Setter Property="Padding" Value="10" />
+    <Setter Property="FontFamily" Value="Arial" />
+    <Setter Property="FontSize" Value="{StaticResource MediumFontSize}" />
+    <Setter Property="FontWeight" Value="Bold" />
+  </Style>
+
+
+  <Style x:Key="TableHeaderTop" TargetType="{x:Type TableCell}" BasedOn="{StaticResource TableHeader}">
+    <Setter Property="TextAlignment" Value="Center" />
+  </Style>
+
+  <Style x:Key="TableHeaderLeft" TargetType="{x:Type TableCell}" BasedOn="{StaticResource TableHeader}">
+    <Setter Property="TextAlignment" Value="Right" />
+  </Style>
+
+  <Style x:Key="ContentCell" TargetType="{x:Type TableCell}">
+    <Setter Property="Padding" Value="10" />
+    <Setter Property="FontFamily" Value="Arial" />
+    <Setter Property="FontSize" Value="{StaticResource MediumFontSize}" />
+    <Setter Property="FontWeight" Value="Normal" />
+  </Style>
+
+
+
+</ResourceDictionary>
