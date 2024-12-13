@@ -14,5 +14,6 @@ The code and data in this GitHub repo are about our first use case, in chronic u
 - https://pubmed.ncbi.nlm.nih.gov/38733261/ Augustin et al. (2024) The socio-economic burden of H1-antihistamine-refractory chronic spontaneous urticaria in Germany
 
 Do join us via the LinkedIn group to contribute to new cases where we apply the elevateHealth framework, as explained in this figure:
+
 ![elevateHealth frame](ElevateHealth.frame.png)
 
