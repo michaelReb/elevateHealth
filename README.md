@@ -4,6 +4,7 @@ elevateHealth Open Science community
 Code and data for
 - modeling & simulation of patient journeys, including early stages of disease (before a person is called a patient)
 - other methodologies and tools used by the elevatehealth community, e.g. impact valuation, Theory of Change (connecting inputs, outputs, outcomes and impact)
+- our human-centric approach considers a) patients who have a diagnosis, b) those with specific disease progression risks who are not yet patients, c) human beings who take care of others including healthcare professionals but also informal carers.
 
 See updates on our LinkedIn group at https://www.linkedin.com/groups/14503169/
 
