@@ -14,7 +14,7 @@ The code and data in this GitHub repo are about our first use case, in chronic u
 
 When installing the code and reproducing the patient journey modeling in the above papers, we recommend to start with the R code, then other code. 
 
-At https://github.com/lenka-arcondis/elevateHealth you can find code from Arcondis that is based on our cardiovascular disease (CVD) code from Daniel Meier (Swiss Re). 
+At https://github.com/lenka-arcondis/elevateHealth you can find code from Arcondis that is based on our cardiovascular disease (CVD) code from Daniel Meier (Swiss Re, https://www.linkedin.com/in/daniel-meier-phd-saa/). 
 
 Contact for this GitHub repo: 
 - Michael Rebhan, https://www.linkedin.com/in/michael-rebhan-b022751/
