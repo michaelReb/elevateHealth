@@ -23,4 +23,4 @@ Do join us via the LinkedIn group to contribute to new cases where we apply the 
 
 ![elevateHealth frame](ElevateHealth.frame.png)
 
-In this figure you can see the high-level picture of the framework we are building, originally based on patient journey modeling (left panel) using 'health states' (https://pubmed.ncbi.nlm.nih.gov/28529704/), the IOOI frame (center panel) and the desire to understand different kinds of value and impact including patient value but also societal value, e.g. building on PALY in addition to QALY and DALY (https://pubmed.ncbi.nlm.nih.gov/40999102/).
+In this figure you can see the high-level picture of the framework we are building, originally based on patient journey modeling (left panel) using 'health states' (https://pubmed.ncbi.nlm.nih.gov/28529704/), the IOOI frame (center panel) and the desire to understand different kinds of value and impact including patient value (at individual level) but also societal value, e.g. building on PALY in addition to QALY and DALY (https://pubmed.ncbi.nlm.nih.gov/40999102/) and also resources e.g. manpower shortages in healthcare systems.
